@@ -39,7 +39,35 @@ typedef struct Investment{
     double withdrawalValue;
 } Investment;
 
+int verifyDate(Date date){
+    if(date.day>30) return 1;
+    else if(date.month>12) return 2;
+    else if(date.year<1900 && date.year>2003) return 3;
+    else return 0;
+    
+};
+
 int main(){
 
+    int validDate=0;
+    Customer Customer;
+    char ask = 'x';
+
+    do{
+        scanf("%d %li", &Customer.phone.DDD, &Customer.phone.number);
+        scanf("%d %d %d", &Customer.birth.day, &Customer.birth.month, &Customer.birth.year);
+        fgets(Customer.name, 50, stdin);
+        fgets(Customer.cpf, 15, stdin);
+        validDate = verifyDate(Customer.birth);
+        if(validDate!=0){
+            do{
+                printf("Data incorreta!");
+                scanf("%d %d %d", &Customer.birth.day, &Customer.birth.month, &Customer.birth.year);
+            }while(validDate==0);
+            break;
+        }
+        scanf("%c ", &ask);
+    }while(ask=='n');
+    
     return 0;
 }
