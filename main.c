@@ -63,11 +63,11 @@ int main(){
             do{
                 printf("Data incorreta!");
                 scanf("%d %d %d", &Customer.birth.day, &Customer.birth.month, &Customer.birth.year);
-            }while(validDate==0);
+            } while(validDate ==0 );
             break;
         }
         scanf("%c ", &ask);
-    }while(ask=='n');
+    }while(ask == 'n');
     
     return 0;
 }
