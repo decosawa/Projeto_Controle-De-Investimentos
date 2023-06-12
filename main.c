@@ -25,7 +25,7 @@ typedef struct Telephone{
 
 typedef struct Customer{
     char name[50];
-    char cpf[12];
+    char cpf[13];
     Telephone phone;
     Date birth;
 } Customer;
@@ -158,7 +158,7 @@ int main(){
                     Customer[i].name[strlen(Customer[i].name)-1] = '\0';
                     
                     printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
-                    fgets(Customer[i].cpf, 12, stdin);
+                    fgets(Customer[i].cpf, 13, stdin);
                 
                     Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
                     i++; //Inteirando i para indicar novo cadastro.
