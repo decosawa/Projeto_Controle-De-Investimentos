@@ -25,19 +25,27 @@ typedef struct Telephone{
 
 typedef struct Customer{
     char name[50];
-    char cpf[15];
+    char cpf[11];
     Telephone phone;
     Date birth;
 } Customer;
 
 typedef struct Investment{
     int applicationType;
-    Date applicationDate;
-    double applicationValue;
-    double interestrate;
-    Date withdrawalDate;
-    double withdrawalValue;
+    char emitter[50];
+    float interestRate;
+    char isActive;
 } Investment;
+
+typedef struct Trade{
+    int tradeId;
+    Customer customer;
+    Investment investment;
+    Date applicationDate;
+    float applicationValue;
+    Date withdrawDate;
+    float withdrawValue;
+} Trade;
 
 int verifyDate(Date date);
 int verifyTelephone(Telephone ph);
@@ -143,12 +151,12 @@ int main(){
                     printf("Nome: ");
                     fgets(Customer[i].name, 50, stdin);
                 
-                    Customer[i].name[strlen(Customer[i].name)-1] = '0';
+                    Customer[i].name[strlen(Customer[i].name)-1] = '\0';
                     
-                    printf("CPF: ");
+                    printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
                     fgets(Customer[i].cpf, 15, stdin);
                 
-                    Customer[i].cpf[strlen(Customer[i].cpf)-1] = '0';
+                    Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
                     i++; //Inteirando i para indicar novo cadastro.
 
                     if(i < MAXCUST){
