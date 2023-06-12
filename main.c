@@ -33,7 +33,7 @@ typedef struct Customer{
 typedef struct Investment{
     int applicationType;
     char emitter[50];
-    double interestRate;
+    float interestRate;
     char isActive;
 } Investment;
 
@@ -42,9 +42,9 @@ typedef struct Trade{
     Customer customer;
     Investment investment;
     Date applicationDate;
-    double applicationValue;
+    float applicationValue;
     Date withdrawDate;
-    double withdrawValue;
+    float withdrawValue;
 } Trade;
 
 int verifyDate(Date date);
