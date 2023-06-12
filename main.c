@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAXCUST 3 //Constante para máximo de consumidores.
+#define MAXCUST 100 //Constante para máximo de consumidores.
 
 typedef struct Date{
     int day;
@@ -49,6 +49,7 @@ typedef struct Trade{
 
 int verifyDate(Date date);
 int verifyTelephone(Telephone ph);
+void showCustumer(Customer sCustomer[], int registred);
 
 int main(){
 
@@ -59,10 +60,10 @@ int main(){
     char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
 
     do{
-        printf("********Menu********\n");
-        printf("1) LCI/LCA\n");
-        printf("2) CDB\n");
-        printf("3) Fundos\n");
+        printf("\n********Menu********\n");
+        printf("1) Cadastrar investimento\n");
+        printf("2) Mostrar todos os clientes cadastrados\n");
+        printf("3) Apresentar extrato\n");
         printf("4) Cadastrar cliente\n");
         printf("5) Sair\n");
         scanf(" %c", &ask);
@@ -78,10 +79,13 @@ int main(){
         switch(ask){
             case '1':
             case '2':
+                showCustumer(Customer, i);
+
+                break;
             case '3':
             case '4':
                 do{
-                    if(i >= MAXCUST){
+                    if(i >= MAXCUST){ //Verifica se o número máximo de cadastros já não foi atingido.
                         printf("Número máximo de clientes cadastrados já foi atingido.\n\n");
 
                         break;
@@ -159,7 +163,7 @@ int main(){
                     Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
                     i++; //Inteirando i para indicar novo cadastro.
 
-                    if(i < MAXCUST){
+                    if(i < MAXCUST){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
                         printf("Deseja continuar cadastrando? (""y"" se sim, ""n"" se não): ");
                         scanf("%c", &ask);
 
@@ -213,4 +217,27 @@ int verifyTelephone(Telephone ph){
      casos de números com 8 dígitos numéricos e o segundo para números com 9 
      dígitos caso o primeiro seja um 9. Caso o número esteja incorreto, o re-
      torno é de 2. */
+}
+
+void showCustumer(Customer sCustomer[], int registred){
+    char aux[MAXCUST];
+
+    for(int i = 0; i < registred - 1; i++){
+        for(int j = i + 1; j < registred; j++){
+            if(strcmp(sCustomer[i].name, sCustomer[j].name) > 0){
+                strcpy(aux, sCustomer[i].name);
+                strcpy(sCustomer[i].name, sCustomer[j].name);
+                strcpy(sCustomer[j].name, aux);
+            }
+        }
+    }
+
+    printf("\n--------------------------------------------------------------\n");
+
+    for(int i = 0; i < registred; i++){
+        printf("Nome: %s \n", sCustomer[i].name);
+        printf("Telefone: (%d) %ld\n\n", sCustomer[i].phone.DDD, sCustomer[i].phone.number);
+    }
+    
+    printf("--------------------------------------------------------------\n\n");
 }
