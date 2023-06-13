@@ -49,12 +49,14 @@ typedef struct Trade{
 
 int verifyDate(Date date);
 int verifyTelephone(Telephone ph);
+int verifyCPF(char cpf[12]);
 void showCustumer(Customer sCustomer[], int registred);
 
 int main(){
 
     int validDate=0, 
         validTelephone=0,
+        validCPF=0,
         i = 0; //i registra quantos clientes estão cadastrados. Caso i = 100, o código proíbe novos cadastros.
     Customer Customer[MAXCUST];
     char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
@@ -156,11 +158,20 @@ int main(){
                     fgets(Customer[i].name, 50, stdin);
                 
                     Customer[i].name[strlen(Customer[i].name)-1] = '\0';
-                    
+
                     printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
                     fgets(Customer[i].cpf, 13, stdin);
-                
                     Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
+                    validCPF = verifyCPF(Customer[i].cpf);     
+
+                    while(validCPF!=0){
+                        printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
+                        fgets(Customer[i].cpf, 13, stdin);
+                        Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
+                        
+                        validCPF = verifyCPF(Customer[i].cpf);   
+                    }
+                    
                     i++; //Inteirando i para indicar novo cadastro.
 
                     if(i < MAXCUST){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
@@ -241,3 +252,39 @@ void showCustumer(Customer sCustomer[], int registred){
     
     printf("--------------------------------------------------------------\n\n");
 }
+
+int verifyCPF(char cpf[12]){
+    int score = 0, //Guarda o número de erros no CPF
+        value = 0; //Valor da multiplicação dos números do CPF
+    
+    if(strlen(cpf)!=11) return 12; // Tamanho inválido
+    else{
+        for(int i = 0; i<11; i++){ // Verifica se o CPF contém apenas números
+            if(cpf[i]>=48 && cpf[i]<=57){}
+            else score++;
+        }
+
+        if(score==0){
+            for(int i = 0; i<9; i++){
+                value += (cpf[i] - 48) * (10 - i);
+            }
+
+            if(value%11 < 2){
+                if((cpf[9] - 48) != 0) return 13; // Penúltimo número inválido
+            }
+            else if((11 - value%11) != (cpf[9] - 48)) return 13; // Penúltimo número inválido
+
+            value = 0;
+            for(int i = 0; i<10; i++){
+                value += (cpf[i] - 48) * (11 - i);
+            }
+
+            if(value%11 < 2){
+                if((cpf[10] - 48) != 0) return 14; // Último número inválido
+            }
+            else if((11 - value%11) != (cpf[10] - 48)) return 14; // Último número inválido
+            else return 0; // CPF válido
+        }
+        else return score;
+    }
+}   
