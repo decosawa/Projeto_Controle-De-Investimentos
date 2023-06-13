@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #define MAXCUST 100 //Constante para máximo de consumidores.
+#define MAXINVEST 30 //Constante para máximo de investimentos.
 
 typedef struct Date{
     int day;
@@ -32,7 +33,7 @@ typedef struct Customer{
 
 typedef struct Investment{
     int applicationType;
-    char emitter[50];
+    char emitter[52];
     float interestRate;
     char isActive;
 } Investment;
@@ -51,15 +52,21 @@ int verifyDate(Date date);
 int verifyTelephone(Telephone ph);
 int verifyCPF(char cpf[12]);
 void showCustumer(Customer sCustomer[], int registred);
+int difDate(Date finalDate, Date startDate); //Função que retorna diferença de dias entre duas datas
+float calcInvest(Investment cInvest);
+Investment registerInvestiment(Investment rInvestiment);
+int getch();
 
 int main(){
 
     int validDate=0, 
         validTelephone=0,
         validCPF=0,
-        i = 0; //i registra quantos clientes estão cadastrados. Caso i = 100, o código proíbe novos cadastros.
+        i = 0, //Número de clientes cadastrados.
+        j = 0; //Número de investimentos cadastrados
     Customer Customer[MAXCUST];
     char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
+    Investment Investment[MAXINVEST];
 
     do{
         printf("\n********Menu********\n");
@@ -68,12 +75,38 @@ int main(){
         printf("3) Apresentar extrato\n");
         printf("4) Cadastrar cliente\n");
         printf("5) Sair\n");
-        scanf(" %c", &ask);
-        getchar();
+
+        ask = getch();
+        
         printf("********Menu********\n\n");
 
         switch(ask){
             case '1':
+                do{
+                    if(j >= 30){
+                        printf("Número máximo de investimentos cadastrados já foi atingido.\n\n");
+
+                        break;
+                    }
+
+                    Investment[j] = registerInvestiment(Investment[j]);
+                    j++; //Incrementa o número de investimentos cadastrados
+
+                    if(j < 30){ //Verifica se o número máximo não foi atingido
+                        printf("Deseja continuar cadastrando? (y/n) ");
+                        scanf(" %c", &ask);
+                        getchar();
+                    }
+
+                    while(ask != 'y' && ask != 'n'){
+                        printf("Opção inválida. Digite novamente. ");
+                        scanf(" %c", &ask);
+                    }
+                } while(ask != 'n');
+
+                 printf("\n--------------------------------------------------------------\n");
+
+                break;
             case '2':
                 showCustumer(Customer, i);
 
@@ -225,14 +258,14 @@ int verifyTelephone(Telephone ph){
 }
 
 void showCustumer(Customer sCustomer[], int registred){
-    char aux[MAXCUST];
+    Customer aux;
 
     for(int i = 0; i < registred - 1; i++){
         for(int j = i + 1; j < registred; j++){
             if(strcmp(sCustomer[i].name, sCustomer[j].name) > 0){
-                strcpy(aux, sCustomer[i].name);
-                strcpy(sCustomer[i].name, sCustomer[j].name);
-                strcpy(sCustomer[j].name, aux);
+                aux = sCustomer[i];
+                sCustomer[i] = sCustomer[j];
+                sCustomer[j] = aux;
             }
         }
     }
@@ -245,6 +278,9 @@ void showCustumer(Customer sCustomer[], int registred){
     }
     
     printf("--------------------------------------------------------------\n\n");
+
+    /* O parâmetro registred serve para previnir que o algoritmo de ordenação acesse posições
+       vazias do vetor de clientes. */
 }
 
 int verifyCPF(char cpf[12]){
@@ -282,3 +318,92 @@ int verifyCPF(char cpf[12]){
         else return score;
     }
 }   
+
+int difDate(Date finalDate, Date startDate){
+    int deltaYear = 0,
+        deltaDay = 0,
+        deltaMonth = 0;  //Estas variáveis guardam a diferença de ano, mês e dia entre as datas
+
+    deltaDay = finalDate.day - startDate.day;
+    deltaMonth = finalDate.month - startDate.month;
+    deltaYear = finalDate.year - startDate.year;
+
+    if(deltaMonth < 0){
+        deltaYear -= 1;
+        deltaMonth = 12 + deltaMonth;
+    }
+
+    if(deltaDay < 0){
+        deltaMonth -= 1;
+        deltaDay = 30 + deltaDay;
+    }
+    
+    return deltaDay + 30 * deltaMonth + 365 * deltaYear;
+}
+
+float calcInvest(Investment cInvest){ //Função que calcula valores relacionados a um investimento
+    float profit = 0,
+          taxes = 0,
+          withdraw = 0, //Valor a ser resgatado
+          interestRate = 0; //Taxas que não são impostos
+
+    switch (cInvest.applicationType){
+        case 1: //1 : LCI/LCA
+        withdraw = 3;
+
+        break;
+        case 2: //2: CDB
+        withdraw = 2;
+
+        break;
+        case 3: //3: Fundos
+        withdraw = 1;
+
+        break;
+    }
+
+    return withdraw;
+}
+
+Investment registerInvestiment(Investment rInvestiment){
+    char option = '\0';
+
+    do{
+        printf("\n--------------------------------------------------------------\n");
+        printf("Tipo de investimento:\n");
+        printf("1) LCI/LCA;\n");
+        printf("2) CDB\n");
+        printf("3) Fundos\n");
+
+        option = getch();
+
+        if(option < '1' || option > '3'){
+            printf("Opção inválida.\n");
+        }
+    } while(option < '1' || option > '3');
+
+    switch (option){
+    case '1': //Tipo 1: LCI/LCA
+        rInvestiment.applicationType = 1; //Tipo 1: LCI/LCA
+
+        break;
+    case '2':
+        rInvestiment.applicationType = 2; //Tipo 2: CDB
+        
+        break;
+    case '3':
+        rInvestiment.applicationType = 3; //Tipo 3: Fundos
+
+        break;
+    }
+    
+    printf("Órgão emissor: ");
+    fgets(rInvestiment.emitter, 50, stdin);
+    printf("Taxa de rendimento: ");
+    scanf("%f", &rInvestiment.interestRate);
+    getchar();
+
+    rInvestiment.isActive = 'S';
+
+    return rInvestiment;
+}
