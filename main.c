@@ -161,17 +161,17 @@ int main(){
 
                     printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
                     fgets(Customer[i].cpf, 13, stdin);
-
+                    Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
                     validCPF = verifyCPF(Customer[i].cpf);     
 
                     while(validCPF!=0){
                         printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
                         fgets(Customer[i].cpf, 13, stdin);
-
+                        Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
+                        
                         validCPF = verifyCPF(Customer[i].cpf);   
                     }
                     
-                    Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
                     i++; //Inteirando i para indicar novo cadastro.
 
                     if(i < MAXCUST){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
