@@ -72,12 +72,6 @@ int main(){
         getchar();
         printf("********Menu********\n\n");
 
-        while(ask <= '1' && ask >= '4'){
-            printf("Opção inválida, digite outra: ");
-            scanf(" %c", &ask);
-            getchar();
-        }
-
         switch(ask){
             case '1':
             case '2':
