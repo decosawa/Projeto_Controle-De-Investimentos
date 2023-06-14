@@ -55,30 +55,31 @@ void showCustumer(Customer sCustomer[], int registred);
 int difDate(Date finalDate, Date startDate); //Função que retorna diferença de dias entre duas datas
 float calcInvest(Investment cInvest);
 Investment registerInvestiment(Investment rInvestiment);
-int getch();
+Customer registerCustomer(Customer rCustomer);
 
-int main(){
-
+int main(){  
     int validDate=0, 
         validTelephone=0,
-        validCPF=0,
         i = 0, //Número de clientes cadastrados.
-        j = 0; //Número de investimentos cadastrados
+        j = 0; //Número de investimentos cadastrados.
     Customer Customer[MAXCUST];
-    char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
+    char ask = 'x', //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
+         enter = 'x'; //Pega um enter do úsuario para continuar o programa.
     Investment Investment[MAXINVEST];
 
+    
+    
     do{
-        printf("\n********Menu********\n");
+        printf("********Menu********\n");
         printf("1) Cadastrar investimento\n");
         printf("2) Mostrar todos os clientes cadastrados\n");
         printf("3) Apresentar extrato\n");
         printf("4) Cadastrar cliente\n");
-        printf("5) Sair\n");
-
-        ask = getch();
-        
-        printf("********Menu********\n\n");
+        printf("5) Sair\n\n");
+        printf("Escolha uma opção: ");
+        scanf("%c", &ask);
+        getchar();
+        system("cls");
 
         switch(ask){
             case '1':
@@ -93,126 +94,61 @@ int main(){
                     j++; //Incrementa o número de investimentos cadastrados
 
                     if(j < 30){ //Verifica se o número máximo não foi atingido
-                        printf("Deseja continuar cadastrando? (y/n) ");
+                        printf("\nDeseja continuar cadastrando? (y/n) ");
                         scanf(" %c", &ask);
-                        getchar();
                     }
 
                     while(ask != 'y' && ask != 'n'){
                         printf("Opção inválida. Digite novamente. ");
                         scanf(" %c", &ask);
                     }
+                    getchar();
+                    system("clear");
+                    
                 } while(ask != 'n');
-
-                 printf("\n--------------------------------------------------------------\n");
-
+                
                 break;
+
             case '2':
                 showCustumer(Customer, i);
-
+                
+                printf("Pressione ENTER para continuar");
+                getchar();
+                
+                system("cls");
+                
                 break;
+                
             case '3':
+            
+                break;
+            
             case '4':
                 do{
                     if(i >= MAXCUST){ //Verifica se o número máximo de cadastros já não foi atingido.
                         printf("Número máximo de clientes cadastrados já foi atingido.\n\n");
-
+                        
                         break;
                     }
 
-                    printf("Informe o DDD: ");
-                    scanf("%d", &Customer[i].phone.DDD);
-            
-                    validTelephone = verifyTelephone(Customer[i].phone);
-                    
-                    while(validTelephone==1){
-                        printf("(Inválido) Informe o DDD: ");
-                        scanf("%d", &Customer[i].phone.DDD);
-                        
-                        validTelephone = verifyTelephone(Customer[i].phone);
-                    }
-                    
-                    printf("Informe o número: ");
-                    scanf("%li", &Customer[i].phone.number);
-                
-                    validTelephone = verifyTelephone(Customer[i].phone);
-                
-                    while(validTelephone==2){
-                        printf("(Inválido) Informe o número: ");
-                        scanf("%li", &Customer[i].phone.number);
-                    
-                        validTelephone = verifyTelephone(Customer[i].phone);
-                    }
-                    
-                    printf("Dia de nascimento: ");
-                    scanf("%d", &Customer[i].birth.day);
-                    
-                    validDate = verifyDate(Customer[i].birth);
-                    
-                    while(validDate==1){
-                        printf("(1 a 30) - Dia de nascimento: ");
-                        scanf("%d", &Customer[i].birth.day);
-                    
-                        validDate = verifyDate(Customer[i].birth);
-                    }
-                    
-                    printf("Mês de nascimento: ");
-                    scanf("%d", &Customer[i].birth.month);
-                    
-                    validDate = verifyDate(Customer[i].birth);
-                    
-                    while(validDate==2){
-                        printf("(1 a 12) - Mês de nascimento: ");
-                        scanf("%d", &Customer[i].birth.month);
-                    
-                        validDate = verifyDate(Customer[i].birth);
-                    }
-                    
-                    printf("Ano de nascimento: ");
-                    scanf("%d", &Customer[i].birth.year);
-                    
-                    validDate = verifyDate(Customer[i].birth);
-                    
-                    while(validDate==3){
-                        printf("(1900 a 2023) - Ano de nascimento: ");
-                        scanf("%d", &Customer[i].birth.year);
-                        
-                        validDate = verifyDate(Customer[i].birth);
-                    }
-
-                    getchar();
-                    printf("Nome: ");
-                    fgets(Customer[i].name, 50, stdin);
-                
-                    Customer[i].name[strlen(Customer[i].name)-1] = '\0';
-
-                    printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
-                    fgets(Customer[i].cpf, 13, stdin);
-                    Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
-                    validCPF = verifyCPF(Customer[i].cpf);     
-
-                    while(validCPF!=0){
-                        printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
-                        fgets(Customer[i].cpf, 13, stdin);
-                        Customer[i].cpf[strlen(Customer[i].cpf)-1] = '\0';
-                        
-                        validCPF = verifyCPF(Customer[i].cpf);   
-                    }
-                    
+                    Customer[i] = registerCustomer(Customer[i]);
                     i++; //Inteirando i para indicar novo cadastro.
 
                     if(i < MAXCUST){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
-                        printf("Deseja continuar cadastrando? (""y"" se sim, ""n"" se não): ");
+                        printf("\nDeseja continuar cadastrando? (""y"" se sim, ""n"" se não): ");
                         scanf("%c", &ask);
 
                         while(ask != 'y' && ask != 'n'){
                             printf("(Inválido) Deseja continuar cadastrando? ");
                             scanf(" %c", &ask);
                         }
+                        getchar();
+                        
                     } else {
                         ask = 'n';
                     }
-
+                    system("cls");
+               
                 } while(ask != 'n');
 
                 break;
@@ -222,11 +158,13 @@ int main(){
                 break;
 
             default:
-                printf("(Inválido)\n");
+                printf("(Inválido) - Pressione ENTER para continuar");
+                getchar();
+                system("cls");
         }
 
     } while(ask != '5');
-        
+
     return 0;
 }
 
@@ -269,15 +207,16 @@ void showCustumer(Customer sCustomer[], int registred){
             }
         }
     }
-
-    printf("\n--------------------------------------------------------------\n");
-
-    for(int i = 0; i < registred; i++){
-        printf("Nome: %s \n", sCustomer[i].name);
-        printf("Telefone: (%d) %ld\n\n", sCustomer[i].phone.DDD, sCustomer[i].phone.number);
-    }
+    
+    printf("********Clientes cadastrados********\n\n");
     
     printf("--------------------------------------------------------------\n\n");
+    
+    for(int i = 0; i < registred; i++){
+        printf("Nome: %s \n", sCustomer[i].name);
+        printf("Telefone: (%d) %ld\n", sCustomer[i].phone.DDD, sCustomer[i].phone.number);
+        printf("\n--------------------------------------------------------------\n\n");
+    }
 
     /* O parâmetro registred serve para previnir que o algoritmo de ordenação acesse posições
        vazias do vetor de clientes. */
@@ -319,26 +258,8 @@ int verifyCPF(char cpf[12]){
     }
 }   
 
-int difDate(Date finalDate, Date startDate){
-    int deltaYear = 0,
-        deltaDay = 0,
-        deltaMonth = 0;  //Estas variáveis guardam a diferença de ano, mês e dia entre as datas
-
-    deltaDay = finalDate.day - startDate.day;
-    deltaMonth = finalDate.month - startDate.month;
-    deltaYear = finalDate.year - startDate.year;
-
-    if(deltaMonth < 0){
-        deltaYear -= 1;
-        deltaMonth = 12 + deltaMonth;
-    }
-
-    if(deltaDay < 0){
-        deltaMonth -= 1;
-        deltaDay = 30 + deltaDay;
-    }
-    
-    return deltaDay + 30 * deltaMonth + 365 * deltaYear;
+int difDate(Date finalDate, Date startDate){ //A função considera um mês com 30 dias, e, portanto, um ano com 360 dias
+    return (finalDate.year - startDate.year)*360 + (finalDate.month - startDate.month)*30 + finalDate.day - startDate.day;
 }
 
 float calcInvest(Investment cInvest){ //Função que calcula valores relacionados a um investimento
@@ -367,15 +288,17 @@ float calcInvest(Investment cInvest){ //Função que calcula valores relacionado
 
 Investment registerInvestiment(Investment rInvestiment){
     char option = '\0';
-
+    
     do{
-        printf("\n--------------------------------------------------------------\n");
+        printf("********Cadastrar investimento********\n\n");
+        
         printf("Tipo de investimento:\n");
         printf("1) LCI/LCA;\n");
         printf("2) CDB\n");
         printf("3) Fundos\n");
-
-        option = getch();
+        
+        printf("\nEscolha uma opção: ");
+        scanf("%c", &option);
 
         if(option < '1' || option > '3'){
             printf("Opção inválida.\n");
@@ -396,14 +319,74 @@ Investment registerInvestiment(Investment rInvestiment){
 
         break;
     }
-    
+    getchar();
     printf("Órgão emissor: ");
     fgets(rInvestiment.emitter, 50, stdin);
     printf("Taxa de rendimento: ");
     scanf("%f", &rInvestiment.interestRate);
     getchar();
-
     rInvestiment.isActive = 'S';
 
     return rInvestiment;
+}
+
+Customer registerCustomer(Customer rCustomer){
+    printf("********Cadastrar cliente********\n\n");
+    printf("Informe o DDD: ");
+    scanf("%d", &rCustomer.phone.DDD);
+
+    while(verifyTelephone(rCustomer.phone)==1){
+        printf("(Inválido) Informe o DDD: ");
+        scanf("%d", &rCustomer.phone.DDD);
+    }
+    
+    printf("Informe o número: ");
+    scanf("%li", &rCustomer.phone.number);
+
+
+    while(verifyTelephone(rCustomer.phone)==2){
+        printf("(Inválido) Informe o número: ");
+        scanf("%li", &rCustomer.phone.number);
+    }
+    
+    printf("Dia de nascimento: ");
+    scanf("%d", &rCustomer.birth.day);
+    
+    while(verifyDate(rCustomer.birth)==1){
+        printf("(1 a 30) - Dia de nascimento: ");
+        scanf("%d", &rCustomer.birth.day);
+    }
+    
+    printf("Mês de nascimento: ");
+    scanf("%d", &rCustomer.birth.month);
+    
+    while(verifyDate(rCustomer.birth)==2){
+        printf("(1 a 12) - Mês de nascimento: ");
+        scanf("%d", &rCustomer.birth.month);
+    }
+    
+    printf("Ano de nascimento: ");
+    scanf("%d", &rCustomer.birth.year);
+    
+    while(verifyDate(rCustomer.birth)==3){
+        printf("(1900 a 2023) - Ano de nascimento: ");
+        scanf("%d", &rCustomer.birth.year);
+    }
+    getchar();
+    
+    printf("Nome: ");
+    fgets(rCustomer.name, 50, stdin);
+
+    rCustomer.name[strlen(rCustomer.name)-1] = '\0';
+
+    printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
+    fgets(rCustomer.cpf, 13, stdin);
+    
+    rCustomer.cpf[strlen(rCustomer.cpf)-1] = '\0';
+
+    while(verifyCPF(rCustomer.cpf) != 0){
+        printf("(Apenas os 11 números, sem pontos e hífen) CPF: ");
+        fgets(rCustomer.cpf, 13, stdin);
+        rCustomer.cpf[strlen(rCustomer.cpf)-1] = '\0';
+    }
 }
