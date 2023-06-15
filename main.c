@@ -56,37 +56,40 @@ int difDate(Date finalDate, Date startDate); //Função que retorna diferença d
 float calcInvest(Investment cInvest);
 Investment registerInvestiment(Investment rInvestiment);
 Customer registerCustomer(Customer rCustomer);
+Trade registerTrade(Trade rTrade);
 
 int main(){  
     int validDate=0, 
         validTelephone=0,
         i = 0, //Número de clientes cadastrados.
-        j = 0; //Número de investimentos cadastrados.
+        j = 0, //Número de investimentos cadastrados.
+        k = 0; //Número de aplicações cadastradas.
     Customer Customer[MAXCUST];
-    char ask = 'x', //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
-         enter = 'x'; //Pega um enter do úsuario para continuar o programa.
+    char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
     Investment Investment[MAXINVEST];
+    Trade Trade[101];
 
-    
-    
     do{
         printf("********Menu********\n");
         printf("1) Cadastrar investimento\n");
         printf("2) Mostrar todos os clientes cadastrados\n");
         printf("3) Apresentar extrato\n");
         printf("4) Cadastrar cliente\n");
-        printf("5) Sair\n\n");
+        printf("5) Cadastrar aplicação\n");
+        printf("6) Sair\n\n");
         printf("Escolha uma opção: ");
         scanf("%c", &ask);
         getchar();
-        system("cls");
+        system("clear");
 
         switch(ask){
             case '1':
                 do{
                     if(j >= 30){
-                        printf("Número máximo de investimentos cadastrados já foi atingido.\n\n");
-
+                        printf("Número máximo de investimentos cadastrados já foi atingido.\n");
+                        printf("Pressione ENTER para continuar");
+                        getchar();
+                        system("clear");
                         break;
                     }
 
@@ -96,14 +99,15 @@ int main(){
                     if(j < 30){ //Verifica se o número máximo não foi atingido
                         printf("\nDeseja continuar cadastrando? (y/n) ");
                         scanf(" %c", &ask);
-                    }
 
-                    while(ask != 'y' && ask != 'n'){
-                        printf("Opção inválida. Digite novamente. ");
-                        scanf(" %c", &ask);
+                        while(ask != 'y' && ask != 'n'){
+                            printf("Opção inválida. Digite novamente. ");
+                            scanf(" %c", &ask);
+                        }
+                        getchar();
+                        system("clear");
                     }
-                    getchar();
-                    system("clear");
+                    else break;
                     
                 } while(ask != 'n');
                 
@@ -115,7 +119,7 @@ int main(){
                 printf("Pressione ENTER para continuar");
                 getchar();
                 
-                system("cls");
+                system("clear");
                 
                 break;
                 
@@ -127,7 +131,9 @@ int main(){
                 do{
                     if(i >= MAXCUST){ //Verifica se o número máximo de cadastros já não foi atingido.
                         printf("Número máximo de clientes cadastrados já foi atingido.\n\n");
-                        
+                        printf("Pressione ENTER para voltar ao menu");
+                        getchar();
+                        system("clear");
                         break;
                     }
 
@@ -147,12 +153,46 @@ int main(){
                     } else {
                         ask = 'n';
                     }
-                    system("cls");
+                    system("clear");
                
                 } while(ask != 'n');
 
                 break;
+                
             case '5':
+                do{
+                if(j==0){
+                        printf("Nenhuma opção de investimento disponível\n\n");
+                        printf("Pressione ENTER para voltar ao menu");
+                        getchar();
+                        system("clear");
+                        break;
+                }
+                
+                    Trade[k] = registerTrade(Trade[k]);
+                    k++; //Inteirando k para indicar nova aplicação.
+
+                    if(k < 101){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
+                        printf("\nDeseja cadastrar outra aplicação? (""y"" se sim, ""n"" se não): ");
+                        scanf("%c", &ask);
+
+                        while(ask != 'y' && ask != 'n'){
+                            printf("(Inválido) Deseja cadastrar outra aplicação? ");
+                            scanf(" %c", &ask);
+                        }
+                        getchar();
+                        
+                    } else {
+                        ask = 'n';
+                    }
+                    system("clear");
+               
+                } while(ask != 'n');
+                
+                
+                break;
+                
+            case '6':
                 printf("Encerrando programa...\n");
                 
                 break;
@@ -160,10 +200,10 @@ int main(){
             default:
                 printf("(Inválido) - Pressione ENTER para continuar");
                 getchar();
-                system("cls");
+                system("clear");
         }
 
-    } while(ask != '5');
+    } while(ask != '6');
 
     return 0;
 }
@@ -289,7 +329,6 @@ float calcInvest(Investment cInvest){ //Função que calcula valores relacionado
 Investment registerInvestiment(Investment rInvestiment){
     char option = '\0';
     
-    do{
         printf("********Cadastrar investimento********\n\n");
         
         printf("Tipo de investimento:\n");
@@ -298,12 +337,13 @@ Investment registerInvestiment(Investment rInvestiment){
         printf("3) Fundos\n");
         
         printf("\nEscolha uma opção: ");
-        scanf("%c", &option);
+        scanf(" %c", &option);
 
-        if(option < '1' || option > '3'){
-            printf("Opção inválida.\n");
+        while(option < '1' || option > '3'){
+            printf("(Inválido) Escolha uma opção: ");
+            scanf(" %c", &option);
         }
-    } while(option < '1' || option > '3');
+        
 
     switch (option){
     case '1': //Tipo 1: LCI/LCA
@@ -389,4 +429,10 @@ Customer registerCustomer(Customer rCustomer){
         fgets(rCustomer.cpf, 13, stdin);
         rCustomer.cpf[strlen(rCustomer.cpf)-1] = '\0';
     }
+    
+    return rCustomer;
+}
+
+Trade registerTrade(Trade rTrade){
+    
 }
