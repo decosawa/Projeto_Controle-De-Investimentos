@@ -436,3 +436,33 @@ Customer registerCustomer(Customer rCustomer){
 Trade registerTrade(Trade rTrade){
     
 }
+
+void resume(Investment investment, Customer customer, Trade trade){
+    Date actualDate;
+
+    printf("Dia atual: ");
+    scanf("%d", &actualDate.day);
+
+    while(verifyDate(actualDate)==1){
+        printf("(1 a 30) - Dia atual: ");
+        scanf("%d", &actualDate.day);
+    }
+    
+    printf("Mês atual: ");
+    scanf("%d", &actualDate.month);
+    
+    while(verifyDate(actualDate)==2){
+        printf("(1 a 12) - Mês atual: ");
+        scanf("%d", &actualDate.month);
+    }
+    
+    printf("Ano atual: ");
+    scanf("%d", &actualDate.year);
+    
+    while(verifyDate(actualDate)==3){
+        printf("(1900 a 2023) - Ano atual: ");
+        scanf("%d", &actualDate.year);
+    }
+
+    
+}
