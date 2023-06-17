@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAXCUST 100 //Constante para máximo de consumidores.
 #define MAXINVEST 30 //Constante para máximo de investimentos.
@@ -68,6 +69,7 @@ int main(){
         match = -1;
     Customer Customer[MAXCUST];
     char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
+    char resumeCPF[13];
     Investment Investment[MAXINVEST];
     Trade Trade[101];
 
@@ -126,7 +128,42 @@ int main(){
                 break;
                 
             case '3':
-            
+                    printf("********Extrato********\n\n");
+                    printf("CPF: ");
+                    fgets(resumeCPF, 13, stdin);
+                    resumeCPF[strlen(resumeCPF)-1]="\0";
+
+                    match=-1;
+                    for(int x=0; x<i; x++){
+                        if(strcmp(resumeCPF, Customer[x].cpf)==0){
+                            match = x;
+                            break;
+                        }
+                    }
+                    if(match==-1){
+                        printf("\nCPF não cadastrado");
+                        printf("\n\nDeseja voltar ao menu? (y/n): ");
+                        scanf("%c", &ask);
+
+                        while(ask != 'y' && ask != 'n'){
+                            printf("(Inválido) Digite novamente: ");
+                            scanf(" %c", &ask);
+                        }
+                        getchar();
+                        if(ask=='y'){
+                            system("cls");
+                            break;
+                        }
+                        else{
+                            ask = 'y';
+                        }
+                    }else{
+                        Trade[k].customer = Customer[match];
+
+                        
+                    }
+
+                                
                 break;
             
             case '4':
@@ -511,33 +548,18 @@ Trade registerTrade(Trade rTrade, int Id, Investment allInvestment[], int regist
 }
 
 void resume(Investment investment, Customer customer, Trade trade){
-    Date actualDate;
+    
+    time_t actualTime;
+    actualTime = time(NULL);
+    struct tm actualDate = *localtime(&actualTime);
+    
+    if(actualDate.tm_mday>30) trade.withdrawDate.day=30;
+    else trade.withdrawDate.day=actualDate.tm_mday;
+    trade.withdrawDate.month=actualDate.tm_mon+1;
+    trade.withdrawDate.year=actualDate.tm_year;
+    
+    
 
-    printf("Dia atual: ");
-    scanf("%d", &actualDate.day);
-
-    while(verifyDate(actualDate)==1){
-        printf("(1 a 30) - Dia atual: ");
-        scanf("%d", &actualDate.day);
-    }
-    
-    printf("Mês atual: ");
-    scanf("%d", &actualDate.month);
-    
-    while(verifyDate(actualDate)==2){
-        printf("(1 a 12) - Mês atual: ");
-        scanf("%d", &actualDate.month);
-    }
-    
-    printf("Ano atual: ");
-    scanf("%d", &actualDate.year);
-    
-    while(verifyDate(actualDate)==3){
-        printf("(1900 a 2023) - Ano atual: ");
-        scanf("%d", &actualDate.year);
-    }
-
-    
 }
 
 float calcInvest(Trade cTrade){ //Função que calcula valores relacionados a um investimento. Funciona em sistema de juros simples.
