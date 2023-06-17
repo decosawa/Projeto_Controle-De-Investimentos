@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define MAXCUST 100 //Constante para máximo de consumidores.
 #define MAXINVEST 30 //Constante para máximo de investimentos.
@@ -53,19 +54,22 @@ int verifyTelephone(Telephone ph);
 int verifyCPF(char cpf[12]);
 void showCustumer(Customer sCustomer[], int registred);
 int difDate(Date finalDate, Date startDate); //Função que retorna diferença de dias entre duas datas
-float calcInvest(Investment cInvest);
+float calcInvest(Trade cTrade);
 Investment registerInvestiment(Investment rInvestiment);
 Customer registerCustomer(Customer rCustomer);
-Trade registerTrade(Trade rTrade);
+Trade registerTrade(Trade rTrade, int Id, Investment allInvestment[], int registered);
+void showInvestment(Investment sInvestment[], int registered);
 
 int main(){  
     int validDate=0, 
         validTelephone=0,
         i = 0, //Número de clientes cadastrados.
         j = 0, //Número de investimentos cadastrados.
-        k = 0; //Número de aplicações cadastradas.
+        k = 0, //Número de aplicações cadastradas.
+        match = -1;
     Customer Customer[MAXCUST];
     char ask = 'x'; //Verifica se o usuário quer ou não continuar cadastrando clientes. Verifica, também, a opção escolhida no menu.
+    char resumeCPF[13];
     Investment Investment[MAXINVEST];
     Trade Trade[101];
 
@@ -80,7 +84,7 @@ int main(){
         printf("Escolha uma opção: ");
         scanf("%c", &ask);
         getchar();
-        system("clear");
+        system("cls");
 
         switch(ask){
             case '1':
@@ -89,7 +93,7 @@ int main(){
                         printf("Número máximo de investimentos cadastrados já foi atingido.\n");
                         printf("Pressione ENTER para continuar");
                         getchar();
-                        system("clear");
+                        system("cls");
                         break;
                     }
 
@@ -105,7 +109,7 @@ int main(){
                             scanf(" %c", &ask);
                         }
                         getchar();
-                        system("clear");
+                        system("cls");
                     }
                     else break;
                     
@@ -119,12 +123,47 @@ int main(){
                 printf("Pressione ENTER para continuar");
                 getchar();
                 
-                system("clear");
+                system("cls");
                 
                 break;
                 
             case '3':
-            
+                    printf("********Extrato********\n\n");
+                    printf("CPF: ");
+                    fgets(resumeCPF, 13, stdin);
+                    resumeCPF[strlen(resumeCPF)-1]="\0";
+
+                    match=-1;
+                    for(int x=0; x<i; x++){
+                        if(strcmp(resumeCPF, Customer[x].cpf)==0){
+                            match = x;
+                            break;
+                        }
+                    }
+                    if(match==-1){
+                        printf("\nCPF não cadastrado");
+                        printf("\n\nDeseja voltar ao menu? (y/n): ");
+                        scanf("%c", &ask);
+
+                        while(ask != 'y' && ask != 'n'){
+                            printf("(Inválido) Digite novamente: ");
+                            scanf(" %c", &ask);
+                        }
+                        getchar();
+                        if(ask=='y'){
+                            system("cls");
+                            break;
+                        }
+                        else{
+                            ask = 'y';
+                        }
+                    }else{
+                        Trade[k].customer = Customer[match];
+
+                        
+                    }
+
+                                
                 break;
             
             case '4':
@@ -133,7 +172,7 @@ int main(){
                         printf("Número máximo de clientes cadastrados já foi atingido.\n\n");
                         printf("Pressione ENTER para voltar ao menu");
                         getchar();
-                        system("clear");
+                        system("cls");
                         break;
                     }
 
@@ -153,7 +192,7 @@ int main(){
                     } else {
                         ask = 'n';
                     }
-                    system("clear");
+                    system("cls");
                
                 } while(ask != 'n');
 
@@ -161,35 +200,75 @@ int main(){
                 
             case '5':
                 do{
-                if(j==0){
-                        printf("Nenhuma opção de investimento disponível\n\n");
-                        printf("Pressione ENTER para voltar ao menu");
+                    if(j==0){ //Verifica se há investimentos disponíveis
+                            printf("Nenhuma opção de investimento disponível\n\n");
+                            printf("Pressione ENTER para voltar ao menu");
+                            getchar();
+                            system("cls");
+                            break;
+                    }
+                    else if(k >= 101){ //Verifica se o número máximo de cadastros foi atingido.
+                        printf("Número máximo de aplicações cadastradas já foi atingido.\n");
+                        printf("Pressione ENTER para continuar");
                         getchar();
-                        system("clear");
+                        system("cls");
                         break;
-                }
+                    }
                 
-                    Trade[k] = registerTrade(Trade[k]);
-                    k++; //Inteirando k para indicar nova aplicação.
-
-                    if(k < 101){ //Verifica se o número máximo de cadastros não foi atingido (de novo).
-                        printf("\nDeseja cadastrar outra aplicação? (""y"" se sim, ""n"" se não): ");
+                    printf("********Cadastrar aplicação********\n\n");
+                    printf("CPF: ");
+                    fgets(Trade[k].customer.cpf, 13, stdin);
+                    Trade[k].customer.cpf[strlen(Trade[k].customer.cpf)-1] = '\0';
+                    
+                    match = -1;
+                    for(int x=0; x<i; x++){
+                        if(strcmp(Trade[k].customer.cpf, Customer[x].cpf)==0){
+                            match = x;
+                            break;
+                        }
+                    } // Verifica se o CPF está cadastrado. se match != - 1, o nome está cadastrado.
+                    
+                    if(match == -1){
+                        printf("\nCPF não cadastrado");
+                        printf("\n\nDeseja voltar ao menu? (y/n): ");
                         scanf("%c", &ask);
 
                         while(ask != 'y' && ask != 'n'){
-                            printf("(Inválido) Deseja cadastrar outra aplicação? ");
+                            printf("(Inválido) Digite novamente: ");
                             scanf(" %c", &ask);
                         }
                         getchar();
-                        
-                    } else {
-                        ask = 'n';
+                        if(ask=='y'){
+                            system("cls");
+                            break;
+                        }
+                        else{
+                            ask = 'y';
+                        }
                     }
-                    system("clear");
+                    else{
+                        Trade[k].customer = Customer[match];
+                        Trade[k] = registerTrade(Trade[k], k+1, Investment, j);
+                        k++; //Inteirando k para indicar nova aplicação.
+    
+                        if(k < 101){ //Verifica se o número máximo de cadastros foi atingido (de novo).
+                            printf("\nDeseja cadastrar outra aplicação? (""y"" se sim, ""n"" se não): ");
+                            scanf("%c", &ask);
+    
+                            while(ask != 'y' && ask != 'n'){
+                                printf("(Inválido) Deseja cadastrar outra aplicação? ");
+                                scanf(" %c", &ask);
+                            }
+                            getchar();
+                            
+                        } else {
+                            ask = 'n';
+                        }
+                    }
+                    
+                    system("cls");
                
                 } while(ask != 'n');
-                
-                
                 break;
                 
             case '6':
@@ -200,7 +279,7 @@ int main(){
             default:
                 printf("(Inválido) - Pressione ENTER para continuar");
                 getchar();
-                system("clear");
+                system("cls");
         }
 
     } while(ask != '6');
@@ -300,30 +379,6 @@ int verifyCPF(char cpf[12]){
 
 int difDate(Date finalDate, Date startDate){ //A função considera um mês com 30 dias, e, portanto, um ano com 360 dias
     return (finalDate.year - startDate.year)*360 + (finalDate.month - startDate.month)*30 + finalDate.day - startDate.day;
-}
-
-float calcInvest(Investment cInvest){ //Função que calcula valores relacionados a um investimento
-    float profit = 0,
-          taxes = 0,
-          withdraw = 0, //Valor a ser resgatado
-          interestRate = 0; //Taxas que não são impostos
-
-    switch (cInvest.applicationType){
-        case 1: //1 : LCI/LCA
-        withdraw = 3;
-
-        break;
-        case 2: //2: CDB
-        withdraw = 2;
-
-        break;
-        case 3: //3: Fundos
-        withdraw = 1;
-
-        break;
-    }
-
-    return withdraw;
 }
 
 Investment registerInvestiment(Investment rInvestiment){
@@ -433,6 +488,131 @@ Customer registerCustomer(Customer rCustomer){
     return rCustomer;
 }
 
-Trade registerTrade(Trade rTrade){
+Trade registerTrade(Trade rTrade, int Id, Investment allInvestment[], int registered){
+    int tInvestment; // armazena o número do investimento escolhido.
     
+    rTrade.tradeId = Id;
+    printf("\nEscolha um tipo de investimento:\n\n");
+    showInvestment(allInvestment, registered);
+    
+    printf("\nInvestimento número: ");
+    scanf("%d", &tInvestment);
+    while(tInvestment<1 || tInvestment>registered){
+        printf("Investimento inválido, digite outro: ");
+        scanf("%d", &tInvestment);
+    }
+    
+    rTrade.investment = allInvestment[tInvestment-1];
+    
+    printf("\n--Data de aplicação--\nDia: ");
+    scanf("%d", &rTrade.applicationDate.day);
+    printf("Mês: ");
+    scanf("%d", &rTrade.applicationDate.month);
+    printf("Ano: ");
+    scanf("%d", &rTrade.applicationDate.year);
+    
+    while(verifyDate(rTrade.applicationDate)!=0){
+        printf("(Inválido)");
+        printf("\n--Data de aplicação--\nDia (1-30): ");
+        scanf("%d", &rTrade.applicationDate.day);
+        printf("Mês (1-12): ");
+        scanf("%d", &rTrade.applicationDate.month);
+        printf("Ano (1900-2023): ");
+        scanf("%d", &rTrade.applicationDate.year);
+    }
+    
+    printf("\nValor da aplicação: R$ ");
+    scanf("%f", &rTrade.applicationValue);
+    
+    printf("\n--Data de retirada--\nDia: ");
+    scanf("%d", &rTrade.withdrawDate.day);
+    printf("Mês: ");
+    scanf("%d", &rTrade.withdrawDate.month);
+    printf("Ano: ");
+    scanf("%d", &rTrade.withdrawDate.year);
+    
+    while(verifyDate(rTrade.withdrawDate)!=0 && difDate(rTrade.withdrawDate, rTrade.applicationDate)<0){
+        printf("(Inválido)");
+        printf("\n--Data de aplicação--\nDia (1-30): ");
+        scanf("%d", &rTrade.withdrawDate.day);
+        printf("Mês (1-12): ");
+        scanf("%d", &rTrade.withdrawDate.month);
+        printf("Ano (1900-2023): ");
+        scanf("%d", &rTrade.withdrawDate.year);
+    }
+    getchar();
+    
+    // falta calcular o valor de retirada.
+    
+    return rTrade;
+}
+
+void resume(Investment investment, Customer customer, Trade trade){
+    
+    time_t actualTime;
+    actualTime = time(NULL);
+    struct tm actualDate = *localtime(&actualTime);
+    
+    if(actualDate.tm_mday>30) trade.withdrawDate.day=30;
+    else trade.withdrawDate.day=actualDate.tm_mday;
+    trade.withdrawDate.month=actualDate.tm_mon+1;
+    trade.withdrawDate.year=actualDate.tm_year;
+    
+    
+
+}
+
+float calcInvest(Trade cTrade){ //Função que calcula valores relacionados a um investimento. Funciona em sistema de juros simples.
+    int time = difDate(cTrade.withdrawDate, cTrade.applicationDate); //Variável que guarda diferença de dias entre aplicação e resgate.
+    float profit = (time / 30) * (cTrade.investment.interestRate / 100) * cTrade.applicationValue, //Lucro sem reduções
+          taxes = 0,
+          adm = 0; //Taxa de administração
+    
+    if(cTrade.investment.applicationType != 1){
+      if(time <= 180){
+        taxes = 0.225 * profit;
+      } else if(time >= 181 && time <= 360){
+        taxes = 0.2 * profit;
+      } else if(time >= 361 && time <= 720){
+        taxes = 0.175 * profit;
+      } else {
+        taxes = 0.15 * profit;
+      }
+      
+      if(cTrade.investment.applicationType == 3){
+        adm = 0.01 * time / 360 * cTrade.applicationValue;
+      }
+    }
+
+    cTrade.withdrawValue = profit + cTrade.applicationValue - (taxes + adm);
+
+    printf("****************\n");
+    printf("Lucro (sem redução de impostos): %.2f\n", profit);
+    printf("Impostos: %.2f\n", taxes);
+    printf("Taxas adicionais: %.2f\n", adm);
+    printf("Valor a ser resgatado: %.2f\n", cTrade.withdrawValue);
+    printf("Lucro (com reduções): %.2f\n", cTrade.withdrawValue - cTrade.applicationValue);
+    printf("****************\n\n");
+    printf("Pressione qualquer tecla para continuar");
+    getchar();
+    system("cls");;
+
+    return cTrade.withdrawValue;
+}
+
+void showInvestment(Investment sInvestment[], int registered){
+    printf("--------------------------------------------------------------\n");
+    
+    for(int i=0; i<registered; i++){
+        printf("Investimento %d", i+1);
+        printf("\n\nTipo de investimento: ");
+        if(sInvestment[i].applicationType==1) printf("LCI/LCA.");
+        else if(sInvestment[i].applicationType==2) printf("CDB.");
+        else if(sInvestment[i].applicationType==3) printf("Fundos.");
+        printf("\nTaxa de rendimento: %.2f", sInvestment[i].interestRate);
+        printf("\nOrgão emissor: ");
+        puts(sInvestment[i].emitter);
+        
+        printf("--------------------------------------------------------------\n");
+    }
 }
