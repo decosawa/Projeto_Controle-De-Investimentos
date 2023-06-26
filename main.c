@@ -56,18 +56,19 @@ typedef struct Trade{
 int verifyDate(Date date);
 int verifyTelephone(Telephone ph);
 int verifyCPF(char cpf[12]);
-void showCustumer(void);
+int verifyName(char name[]);
 int difDate(Date finalDate, Date startDate); //Função que retorna diferença de dias entre duas datas
 float calcInvest(Trade cTrade);
 Investment registerInvestiment(Investment rInvestiment);
 Customer registerCustomer(Customer rCustomer);
 Trade registerTrade(Trade rTrade, int Id);
+Date scanDate(void);
 void showInvestment(void);
 void showExtract(char matchCPF[]);
 void showSum(void);
+void showCustumer(void);
 int multipleCPF(char mCPF[]);
 Date catchLocalDate(void);
-int verifyName(char name[]);
 char wContinue(void);
 
 int contCust = 0, //Número de clientes cadastrados
@@ -289,30 +290,6 @@ int verifyTelephone(Telephone ph){
      torno é de 2. */
 }
 
-void showCustumer(void){
-    Customer aux;
-    
-    for(int i = 0; i < contCust - 1; i++){
-        for(int j = i + 1; j < contCust; j++){
-            if(strcmp(customers[i].name, customers[j].name) > 0){
-                aux = customers[i];
-                customers[i] = customers[j];
-                customers[j] = aux;
-            }
-        }
-    }
-    
-    printf("********Clientes cadastrados********\n\n");
-    
-    printf("--------------------------------------------------------------\n\n");
-    
-    for(int i = 0; i < contCust; i++){
-        printf("Nome: %s \n", customers[i].name);
-        printf("Telefone: (%d) %ld\n", customers[i].phone.DDD, customers[i].phone.number);
-        printf("\n--------------------------------------------------------------\n\n");
-    }
-}
-
 int verifyCPF(char cpf[12]){
     int score = 0, //Guarda o número de erros no CPF
         value = 0; //Valor da multiplicação dos números do CPF
@@ -349,6 +326,46 @@ int verifyCPF(char cpf[12]){
         else return score;
     }
 }  
+
+int verifyName(char name[]){ //A função verifica se o nome é válido (apenas letras no nome, primeiro caractere não pode ser um espaço)
+    int nameLength = strlen(name);
+
+    if(name[0] == ' '){
+        return 1;
+    }
+
+    for(int i = 0; i < nameLength; i++){
+        if(((name[i] < 'A' || name[i] > 'Z') && (name[i] < 'a' || name[i] > 'z')) && name[i] != ' '){
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void showCustumer(void){
+    Customer aux;
+    
+    for(int i = 0; i < contCust - 1; i++){
+        for(int j = i + 1; j < contCust; j++){
+            if(strcmp(customers[i].name, customers[j].name) > 0){
+                aux = customers[i];
+                customers[i] = customers[j];
+                customers[j] = aux;
+            }
+        }
+    }
+    
+    printf("********Clientes cadastrados********\n\n");
+    
+    printf("--------------------------------------------------------------\n\n");
+    
+    for(int i = 0; i < contCust; i++){
+        printf("Nome: %s \n", customers[i].name);
+        printf("Telefone: (%d) %ld\n", customers[i].phone.DDD, customers[i].phone.number);
+        printf("\n--------------------------------------------------------------\n\n");
+    }
+}
 
 int difDate(Date finalDate, Date startDate){ //A função considera um mês com 30 dias, e, portanto, um ano com 360 dias
     return (finalDate.year - startDate.year)*360 + (finalDate.month - startDate.month)*30 + finalDate.day - startDate.day;
@@ -421,35 +438,17 @@ Customer registerCustomer(Customer rCustomer){
     printf("Informe o número: ");
     scanf("%li", &rCustomer.phone.number);
 
-
     while(verifyTelephone(rCustomer.phone)==2){
         printf("(Inválido) Informe o número: ");
         scanf("%li", &rCustomer.phone.number);
     }
     
-    printf("Dia de nascimento: ");
-    scanf("%d", &rCustomer.birth.day);
-    
-    while(verifyDate(rCustomer.birth)==1){
-        printf("(1 a 30) - Dia de nascimento: ");
-        scanf("%d", &rCustomer.birth.day);
+    rCustomer.birth = scanDate();
+
+    while(verifyDate(rCustomer.birth)!=0){
+        printf("Data inválida! Digite novamente!\n");
+        rCustomer.birth = scanDate();
     }
-    printf("Mês de nascimento: ");
-    scanf("%d", &rCustomer.birth.month);
-    
-    while(verifyDate(rCustomer.birth)==2){
-        printf("(1 a 12) - Mês de nascimento: ");
-        scanf("%d", &rCustomer.birth.month);
-    }
-    
-    printf("Ano de nascimento: ");
-    scanf("%d", &rCustomer.birth.year);
-    
-    while(verifyDate(rCustomer.birth)==3){
-        printf("(1900 a 2023) - Ano de nascimento: ");
-        scanf("%d", &rCustomer.birth.year);
-    }
-    getchar();
     
     printf("Nome: ");
     fgets(rCustomer.name, 50, stdin);
@@ -520,48 +519,46 @@ Trade registerTrade(Trade rTrade, int Id){
 
     rTrade.investment = investments[tInvestment-1];
     
-    printf("\n--Data de aplicação--\nDia: ");
-    scanf("%d", &rTrade.applicationDate.day);
-    printf("Mês: ");
-    scanf("%d", &rTrade.applicationDate.month);
-    printf("Ano: ");
-    scanf("%d", &rTrade.applicationDate.year);
+    printf("\n--Data de aplicação--\n");
+    rTrade.applicationDate=scanDate();
     
     while(verifyDate(rTrade.applicationDate)!=0 || difDate(pDate, rTrade.applicationDate)<0){
-        printf("(Inválido)");
-        printf("\n--Data de aplicação--\nDia (1-30): ");
-        scanf("%d", &rTrade.applicationDate.day);
-        printf("Mês (1-12): ");
-        scanf("%d", &rTrade.applicationDate.month);
-        printf("Ano: ");
-        scanf("%d", &rTrade.applicationDate.year);
+        printf("Data inválida! Digite novamente: \n");
+        printf("\n--Data de aplicação--\n");
+        rTrade.applicationDate=scanDate();
     }
     
     printf("\nValor da aplicação: R$ ");
     scanf("%f", &rTrade.applicationValue);
     
-    printf("\n--Data de retirada--\nDia: ");
-    scanf("%d", &rTrade.withdrawDate.day);
-    printf("Mês: ");
-    scanf("%d", &rTrade.withdrawDate.month);
-    printf("Ano: ");
-    scanf("%d", &rTrade.withdrawDate.year);
+    printf("\n--Data de retirada--\n");
+    rTrade.withdrawDate=scanDate();
     
     while((verifyDate(rTrade.withdrawDate)!=0 && verifyDate(rTrade.withdrawDate)!=3) ||  difDate(rTrade.withdrawDate, rTrade.applicationDate)<0){
-        printf("(Inválido)");
-        printf("\n--Data de aplicação--\nDia (1-30): ");
-        scanf("%d", &rTrade.withdrawDate.day);
-        printf("Mês (1-12): ");
-        scanf("%d", &rTrade.withdrawDate.month);
-        printf("Ano: ");
-        scanf("%d", &rTrade.withdrawDate.year);
+        printf("Data inválida! Digite novamente: \n");
+        printf("\n--Data de retirada--\n");
+        rTrade.withdrawDate=scanDate();
     }
-    getchar();
 
     rTrade.withdrawValue = calcInvest(rTrade);
     printf("**********************\n");
     
     return rTrade;
+}
+
+Date scanDate(void){
+
+    Date date;
+
+    printf("Dia (1-30): ");
+    scanf("%d", &date.day);
+    printf("Mês (1-12): ");
+    scanf("%d", &date.month);
+    printf("Ano: ");
+    scanf("%d", &date.year);
+    getchar();
+
+    return date;
 }
 
 float calcInvest(Trade cTrade){ //Função que calcula valores relacionados a um investimento. Funciona em sistema de juros simples.
@@ -710,22 +707,6 @@ Date catchLocalDate(void){
        dia 31/x para 01/x+1 ou não. */
 
     return localDate;
-}
-
-int verifyName(char name[]){ //A função verifica se o nome é válido (apenas letras no nome, primeiro caractere não pode ser um espaço)
-    int nameLength = strlen(name);
-
-    if(name[0] == ' '){
-        return 1;
-    }
-
-    for(int i = 0; i < nameLength; i++){
-        if(((name[i] < 'A' || name[i] > 'Z') && (name[i] < 'a' || name[i] > 'z')) && name[i] != ' '){
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 char wContinue(void){ //Verifica se o usuário quer continuar a cadastrar algo
